@@ -1,0 +1,75 @@
+//AUTOMATIC DOOR FOR BLIND PEOPLE
+
+/*To use this circuit:
+
+1.Use the UDS (circle mark) to activate the servo motor.
+2.Then the buzzer will ring to indicate that the doors are open.
+
+*/
+
+
+//Libraries
+#include <Servo.h>
+Servo myservo;
+
+//Variables
+int A =90;// angle of the servo
+int Trig = 6;// sensor trigger pin
+int Echo = 7;// sensor echo pin
+int LED = 8; // light-emitting diode
+int buzzer = 10;// buzzer pin
+
+
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(Trig,OUTPUT);
+  pinMode(Echo,INPUT);
+  pinMode(LED,OUTPUT);
+  pinMode(buzzer,OUTPUT);
+  myservo.attach(9);
+  myservo.write(A);
+  delay(1000);
+}
+
+void loop()
+{
+  long width, distance;
+  digitalWrite(Trig,LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(Trig,HIGH);
+  delayMicroseconds(10);
+  
+  digitalWrite(Trig,LOW);
+  width=pulseIn(Echo,HIGH);
+  distance=width/58.2;// constant formula
+  Serial.print("Distance is: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  Serial.println();
+ 
+  if (distance<80)
+  {
+   digitalWrite(LED,1);
+   for(A = 90 ; A >= 0 ; A -= 15)
+   {
+     tone(buzzer,500);
+     myservo.write(A);
+     delay(100);
+   }
+   delay(1000);  
+   for(A = 0 ; A <= 90 ; A += 15)
+   {
+    noTone(buzzer);
+     myservo.write(A);
+     delay(100);
+   }
+   digitalWrite(LED,0);
+    
+  }    
+  
+
+  
+  
+}
